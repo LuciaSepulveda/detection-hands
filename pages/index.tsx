@@ -127,7 +127,7 @@ const Home: NextPage = () => {
             }
 
             predictions.forEach((prediction: any) => {
-              makeLines(prediction, ctx)
+              if (ctx !== null) makeLines(prediction, ctx)
               prediction.keypoints.map((elem: any) => {
                 const x = elem.x
                 const y = elem.y
