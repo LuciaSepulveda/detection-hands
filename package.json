@@ -13,6 +13,7 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mediapipe/face_detection": "^0.4.1646425229",
+    "@react-three/fiber": "^8.3.0",
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow-models/face-detection": "^1.0.1",
     "@tensorflow-models/hand-pose-detection": "^2.0.0",
@@ -24,12 +25,14 @@
     "next": "12.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-webcam": "^7.0.1"
+    "react-webcam": "^7.0.1",
+    "three": "^0.143.0"
   },
   "devDependencies": {
     "@types/node": "18.0.6",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
+    "@types/three": "^0.143.0",
     "eslint": "8.20.0",
     "eslint-config-next": "12.2.2",
     "typescript": "4.7.4"
