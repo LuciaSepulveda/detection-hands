@@ -13,161 +13,19 @@ import * as handPoseDetection from "@tensorflow-models/hand-pose-detection"
 import * as tf from "@tensorflow/tfjs-core"
 // Register WebGL backend.
 import "@tensorflow/tfjs-backend-webgl"
-import { Button, chakra, Heading, Text } from "@chakra-ui/react"
-import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { pointsInitial, pointsInfo, connections } from "../utils/utils"
 import {
-  Canvas,
-  extend,
-  ReactThreeFiber,
-  useFrame,
-  useThree,
-} from "@react-three/fiber"
-
-extend({ OrbitControls })
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      orbitControls: ReactThreeFiber.Object3DNode<
-        OrbitControls,
-        typeof OrbitControls
-      >
-    }
-  }
-}
-
-interface PropsBox {
-  points: {
-    x: number
-    y: number
-    z: number
-  }[]
-}
-
-const Box = ({ points }: PropsBox) => {
-  const mesh0 = useRef<THREE.Mesh>(null!)
-  const mesh1 = useRef<THREE.Mesh>(null!)
-  const mesh2 = useRef<THREE.Mesh>(null!)
-  const mesh3 = useRef<THREE.Mesh>(null!)
-  const mesh4 = useRef<THREE.Mesh>(null!)
-  const mesh5 = useRef<THREE.Mesh>(null!)
-  const mesh6 = useRef<THREE.Mesh>(null!)
-  const mesh7 = useRef<THREE.Mesh>(null!)
-  const mesh8 = useRef<THREE.Mesh>(null!)
-  const mesh9 = useRef<THREE.Mesh>(null!)
-  const mesh10 = useRef<THREE.Mesh>(null!)
-  const mesh11 = useRef<THREE.Mesh>(null!)
-  const mesh12 = useRef<THREE.Mesh>(null!)
-  const mesh13 = useRef<THREE.Mesh>(null!)
-  const mesh14 = useRef<THREE.Mesh>(null!)
-  const mesh15 = useRef<THREE.Mesh>(null!)
-  const mesh16 = useRef<THREE.Mesh>(null!)
-  const mesh17 = useRef<THREE.Mesh>(null!)
-  const mesh18 = useRef<THREE.Mesh>(null!)
-  const mesh19 = useRef<THREE.Mesh>(null!)
-  const mesh20 = useRef<THREE.Mesh>(null!)
-
-  const line0 = useRef<any>(null!)
-  const line1 = useRef<any>(null!)
-  const line2 = useRef<any>(null!)
-  const line3 = useRef<any>(null!)
-  const line4 = useRef<any>(null!)
-  const line5 = useRef<any>(null!)
-  const line6 = useRef<any>(null!)
-  const line7 = useRef<any>(null!)
-  const line8 = useRef<any>(null!)
-  const line9 = useRef<any>(null!)
-  const line10 = useRef<any>(null!)
-  const line11 = useRef<any>(null!)
-  const line12 = useRef<any>(null!)
-  const line13 = useRef<any>(null!)
-  const line14 = useRef<any>(null!)
-  const line15 = useRef<any>(null!)
-  const line16 = useRef<any>(null!)
-  const line17 = useRef<any>(null!)
-  const line18 = useRef<any>(null!)
-  const line19 = useRef<any>(null!)
-  const line20 = useRef<any>(null!)
-
-  useFrame((state, delta) => {
-    pointsInfo.map((point, index) => {
-      const ref = eval(point.mesh)
-
-      if (ref.current) {
-        ref.current.position.x = points[index].x * 30
-        ref.current.position.y = points[index].y * -30
-        ref.current.position.z = points[index].z * 30
-      }
-    })
-
-    connections.map((connection, index) => {
-      const ref1 = eval(
-        `line${
-          connection[0] === 0 && index === 0
-            ? "0"
-            : connection[0] === 0 && index === 4
-            ? "4"
-            : connection[0] === 0 && index === 8
-            ? "8"
-            : connection[0] === 0 && index === 12
-            ? "12"
-            : connection[0] === 0 && index === 16
-            ? "16"
-            : connection[0]
-        }`
-      )
-
-      if (ref1.current) {
-        ref1.current.setFromPoints([
-          new THREE.Vector3(
-            30 * points[connection[0]].x,
-            -30 * points[connection[0]].y,
-            30 * points[connection[0]].z
-          ),
-          new THREE.Vector3(
-            30 * points[connection[1]].x,
-            -30 * points[connection[1]].y,
-            30 * points[connection[1]].z
-          ),
-        ])
-      }
-    })
-  })
-
-  return (
-    <>
-      {pointsInfo.map((point) => (
-        <mesh key={point.mesh} ref={eval(point.mesh)} position={[0, 0, 0]}>
-          <sphereGeometry args={[0.15, 32, 32]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
-      ))}
-      {pointsInfo.map((point) => (
-        <lineSegments key={point.line}>
-          <bufferGeometry ref={eval(point.line)}>
-            <bufferAttribute />
-          </bufferGeometry>
-          <lineBasicMaterial linewidth={1} attach="material" color="#ffffff" />
-        </lineSegments>
-      ))}
-    </>
-  )
-}
-
-const CameraControls = () => {
-  const {
-    camera,
-    gl: { domElement },
-  } = useThree()
-
-  const controls: any = useRef()
-
-  useFrame((state) => controls.current.update())
-
-  return <orbitControls ref={controls} args={[camera, domElement]} />
-}
+  Box,
+  Button,
+  Center,
+  chakra,
+  Flex,
+  Heading,
+  Text,
+} from "@chakra-ui/react"
+import { pointsInitial, connections } from "../utils/utils"
+import { Canvas } from "@react-three/fiber"
+import HandThree from "../components/HandThree"
+import CameraControls from "../components/cameraControls"
 
 interface Points3d {
   x: number
@@ -185,6 +43,7 @@ const Home: NextPage = () => {
   const [section, setSection] = useState<number>(0)
   const [points, setPoints] = useState<Points3d[]>(pointsInitial)
   const [wait, setWait] = useState<boolean>(false)
+  const [showArrow, setShowArrow] = useState<boolean>(false)
 
   const loadModel = async () => {
     try {
@@ -294,12 +153,15 @@ const Home: NextPage = () => {
 
       if (Math.abs(rate) > 0.77) {
         setDirection(rate)
+      } else {
+        setShowArrow(false)
       }
     }
   }, [midPoint])
 
   useEffect(() => {
     if (direction) {
+      setShowArrow(true)
       if (direction < 0 && section > -4) {
         setSection(section - 1)
       }
@@ -314,13 +176,8 @@ const Home: NextPage = () => {
     frameRate: { ideal: 60 },
   }
 
-  const videoRef =
-    useRef<HTMLVideoElement>() as React.MutableRefObject<HTMLVideoElement>
   const canvasRef =
     useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>
-
-  const imageRef =
-    useRef<HTMLImageElement>() as React.MutableRefObject<HTMLImageElement>
 
   return (
     <div className="App">
@@ -386,13 +243,6 @@ const Home: NextPage = () => {
               bottom: 0,
             }}
           />
-          <video
-            autoPlay
-            ref={videoRef}
-            hidden
-            width="400"
-            height="400"
-          ></video>
           <canvas
             style={{
               position: "absolute",
@@ -404,6 +254,57 @@ const Home: NextPage = () => {
             height={300}
             ref={canvasRef}
           ></canvas>
+          <div
+            style={{
+              background: "gray",
+              position: "absolute",
+              top: 0,
+              left: 400,
+              width: "60%",
+              height: "100%",
+            }}
+          >
+            <Flex
+              visibility={showArrow ? "visible" : "hidden"}
+              mx="auto"
+              flexDirection="column"
+              h="100%"
+              position="relative"
+              transition="all 0.5s ease"
+            >
+              <Box
+                mx="auto"
+                my="auto"
+                transform={
+                  direction && direction > 0 ? "rotate(180deg)" : "rotate(0deg)"
+                }
+              >
+                <Box
+                  position="relative"
+                  w="200px"
+                  h="10px"
+                  bg="yellow"
+                  transform="rotate(-45deg)"
+                  mb="55px"
+                />
+                <Box
+                  position="relative"
+                  w="400px"
+                  h="10px"
+                  bg="yellow"
+                  ml="40px"
+                />
+                <Box
+                  position="relative"
+                  w="200px"
+                  h="10px"
+                  bg="yellow"
+                  transform="rotate(45deg)"
+                  mt="60px"
+                />
+              </Box>
+            </Flex>
+          </div>
           <div
             style={{
               position: "absolute",
@@ -420,7 +321,7 @@ const Home: NextPage = () => {
               <CameraControls />
               <ambientLight />
               <pointLight position={[10, 10, 10]} />
-              <Box points={points} />
+              <HandThree points={points} />
             </Canvas>
           </div>
         </div>
