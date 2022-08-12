@@ -24,7 +24,7 @@ import {
 } from "@chakra-ui/react"
 import { pointsInitial, connections } from "../utils/utils"
 import { Canvas } from "@react-three/fiber"
-import HandThree from "../components/HandThree"
+import HandThree from "../components/handThree"
 import CameraControls from "../components/cameraControls"
 
 interface Points3d {
