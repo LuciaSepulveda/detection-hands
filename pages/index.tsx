@@ -134,21 +134,6 @@ const Box = ({ points }: PropsBox) => {
         ])
       }
     })
-
-    if (line5.current) {
-      line5.current.setFromPoints([
-        new THREE.Vector3(
-          30 * points[5].x,
-          -30 * points[5].y,
-          30 * points[5].z
-        ),
-        new THREE.Vector3(
-          30 * points[6].x,
-          -30 * points[6].y,
-          30 * points[6].z
-        ),
-      ])
-    }
   })
 
   return (
@@ -199,6 +184,7 @@ const Home: NextPage = () => {
   const [direction, setDirection] = useState<number>()
   const [section, setSection] = useState<number>(0)
   const [points, setPoints] = useState<Points3d[]>(pointsInitial)
+  const [wait, setWait] = useState<boolean>(false)
 
   const loadModel = async () => {
     try {
@@ -209,6 +195,7 @@ const Home: NextPage = () => {
       })
 
       setModel(detectorHands)
+      setTimeout(() => setWait(true), 1500)
     } catch (err) {
       console.error("err ", err)
     }
@@ -305,7 +292,7 @@ const Home: NextPage = () => {
         (midPoint.val - prevMidPoint.val) / (midPoint.time - prevMidPoint.time)
       setRate(rate)
 
-      if (Math.abs(rate) > 1) {
+      if (Math.abs(rate) > 0.77) {
         setDirection(rate)
       }
     }
@@ -313,10 +300,10 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (direction) {
-      if (direction < 0 && section > -3) {
+      if (direction < 0 && section > -4) {
         setSection(section - 1)
       }
-      if (direction > 0 && section < 3) setSection(section + 1)
+      if (direction > 0 && section < 4) setSection(section + 1)
     }
   }, [direction])
 
@@ -357,17 +344,17 @@ const Home: NextPage = () => {
         transition="all 0.5s ease"
       >
         <Heading as="h1" m="auto" my="20px">
-          Prueba tensor flow hands detection
+          Test tensor flow hands detection
         </Heading>
 
-        {model !== null && webcamRef.current !== null && (
+        {model !== null && webcamRef.current !== null && wait && (
           <>
             <Text m="auto" fontSize="xl" mb="10px">
-              {section > 2
+              {section > 3
                 ? "Move your hand in right direction"
-                : section < -2
+                : section < -3
                 ? "Move your hand in left direction"
-                : section >= -2 && section <= 2
+                : section >= -3 && section <= 3
                 ? "Move your hand in right or left direction to change the background"
                 : ""}
             </Text>
