@@ -1,6 +1,6 @@
 import type { NextPage } from "next"
 import Head from "next/head"
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Webcam from "react-webcam"
 import "@tensorflow/tfjs-backend-cpu"
 //new
@@ -26,6 +26,10 @@ import { pointsInitial, connections } from "../utils/utils"
 import { Canvas } from "@react-three/fiber"
 import HandThree from "../components/handThree"
 import CameraControls from "../components/cameraControls"
+import { AnimatePresence, motion } from "framer-motion"
+
+const FlexMotion = motion(Flex)
+const BoxMotion = motion(Box)
 
 interface Points3d {
   x: number
@@ -44,6 +48,8 @@ const Home: NextPage = () => {
   const [points, setPoints] = useState<Points3d[]>(pointsInitial)
   const [wait, setWait] = useState<boolean>(false)
   const [showArrow, setShowArrow] = useState<boolean>(false)
+
+  const array = [-4, -3, -2, -1, 0, 1, 2, 3, 4]
 
   const loadModel = async () => {
     try {
@@ -151,7 +157,7 @@ const Home: NextPage = () => {
         (midPoint.val - prevMidPoint.val) / (midPoint.time - prevMidPoint.time)
       setRate(rate)
 
-      if (Math.abs(rate) > 0.77) {
+      if (Math.abs(rate) > 0.85) {
         setDirection(rate)
       } else {
         setShowArrow(false)
@@ -208,27 +214,19 @@ const Home: NextPage = () => {
           <>
             <Text m="auto" fontSize="xl" mb="10px">
               {section > 3
-                ? "Move your hand in right direction"
-                : section < -3
                 ? "Move your hand in left direction"
+                : section < -3
+                ? "Move your hand in right direction"
                 : section >= -3 && section <= 3
                 ? "Move your hand in right or left direction to change the background"
                 : ""}
             </Text>
             <Button m="auto" mb="20px" w="100px" onClick={() => detectHands()}>
-              Comenzar
+              Start
             </Button>
           </>
         )}
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            margin: "auto",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
+        <Flex w="100%" h="100%" position="relative" flexDirection="row">
           <Webcam
             audio={false}
             id="img"
@@ -243,76 +241,12 @@ const Home: NextPage = () => {
               bottom: 0,
             }}
           />
-          <canvas
-            style={{
-              position: "absolute",
-              right: 0,
-              bottom: 0,
-            }}
-            id="canvas"
-            width={300}
-            height={300}
-            ref={canvasRef}
-          ></canvas>
           <div
             style={{
-              background: "gray",
-              position: "absolute",
-              top: 0,
-              left: 400,
-              width: "60%",
-              height: "100%",
-            }}
-          >
-            <Flex
-              visibility={showArrow ? "visible" : "hidden"}
-              mx="auto"
-              flexDirection="column"
-              h="100%"
-              position="relative"
-              transition="all 0.5s ease"
-            >
-              <Box
-                mx="auto"
-                my="auto"
-                transform={
-                  direction && direction > 0 ? "rotate(180deg)" : "rotate(0deg)"
-                }
-              >
-                <Box
-                  position="relative"
-                  w="200px"
-                  h="10px"
-                  bg="yellow"
-                  transform="rotate(-45deg)"
-                  mb="55px"
-                />
-                <Box
-                  position="relative"
-                  w="400px"
-                  h="10px"
-                  bg="yellow"
-                  ml="40px"
-                />
-                <Box
-                  position="relative"
-                  w="200px"
-                  h="10px"
-                  bg="yellow"
-                  transform="rotate(45deg)"
-                  mt="60px"
-                />
-              </Box>
-            </Flex>
-          </div>
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              bottom: 0,
               background: "black",
               width: "400px",
               height: "400px",
+              alignSelf: "end",
             }}
           >
             <Canvas
@@ -324,7 +258,104 @@ const Home: NextPage = () => {
               <HandThree points={points} />
             </Canvas>
           </div>
-        </div>
+          {model !== null && webcamRef.current !== null && wait && (
+            <Flex
+              ml="auto"
+              mr="auto"
+              width="100%"
+              height="100%"
+              flexDirection="column"
+            >
+              <Flex w="100%" h="100%" position="relative">
+                <AnimatePresence>
+                  {showArrow && (
+                    <FlexMotion
+                      mx="auto"
+                      flexDirection="column"
+                      h="100%"
+                      position="relative"
+                      initial={{ opacity: 0.5 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ ease: "easeOut", duration: 0.5 }}
+                    >
+                      <Box
+                        mx="auto"
+                        my="auto"
+                        transform={
+                          direction && direction > 0
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)"
+                        }
+                      >
+                        <Box
+                          position="relative"
+                          w="200px"
+                          h="10px"
+                          bg="black"
+                          transform="rotate(-45deg)"
+                          mb="58px"
+                        />
+                        <Box
+                          position="relative"
+                          w="400px"
+                          h="10px"
+                          bg="black"
+                          ml="40px"
+                        />
+                        <Box
+                          position="relative"
+                          w="200px"
+                          h="10px"
+                          bg="black"
+                          transform="rotate(45deg)"
+                          mt="58px"
+                          ml="2px"
+                        />
+                      </Box>
+                    </FlexMotion>
+                  )}
+                </AnimatePresence>
+              </Flex>
+              <Flex
+                w="fit-content"
+                h="60px"
+                position="relative"
+                justifyContent="center"
+                p={4}
+                m="auto"
+                borderRadius={8}
+              >
+                {array.map((elem) => (
+                  <React.Fragment key={elem}>
+                    <BoxMotion
+                      marginX={1}
+                      h="25px"
+                      w="25px"
+                      borderRadius="100%"
+                      border="1.5px solid black"
+                      animate={{
+                        //rotateY: elem === section ? [0, 360] : 0,
+                        scale: elem === section ? [1, 0.8, 1] : 1
+                      }}
+                      transition={{
+                        repeat: elem === section && Infinity,
+                        duration: elem === section && 2,
+                        ease: elem === section && "easeInOut",
+                      }}
+                    />
+                  </React.Fragment>
+                ))}
+              </Flex>
+            </Flex>
+          )}
+          <canvas
+            id="canvas"
+            width={300}
+            height={300}
+            ref={canvasRef}
+            style={{ width: 400, height: 400, alignSelf: "end" }}
+          ></canvas>
+        </Flex>
       </chakra.main>
     </div>
   )
