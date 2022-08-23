@@ -218,7 +218,7 @@ const Home: NextPage = () => {
                 : section < -3
                 ? "Move your hand in right direction"
                 : section >= -3 && section <= 3
-                ? "Move your hand in right or left direction to change the background"
+                ? "Move your hand in right or left direction to change the background and move the squares"
                 : ""}
             </Text>
             <Button m="auto" mb="20px" w="100px" onClick={() => detectHands()}>
@@ -286,31 +286,19 @@ const Home: NextPage = () => {
                             ? "rotate(180deg)"
                             : "rotate(0deg)"
                         }
+                        w="100px"
                       >
-                        <Box
-                          position="relative"
-                          w="200px"
-                          h="10px"
-                          bg="black"
-                          transform="rotate(-45deg)"
-                          mb="58px"
-                        />
-                        <Box
-                          position="relative"
-                          w="400px"
-                          h="10px"
-                          bg="black"
-                          ml="40px"
-                        />
-                        <Box
-                          position="relative"
-                          w="200px"
-                          h="10px"
-                          bg="black"
-                          transform="rotate(45deg)"
-                          mt="58px"
-                          ml="2px"
-                        />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 25 25"
+                        >
+                          <g id="Left-2" data-name="Left">
+                            <polygon
+                              points="24 12.001 2.914 12.001 8.208 6.706 7.501 5.999 1 12.501 7.5 19.001 8.207 18.294 2.914 13.001 24 13.001 24 12.001"
+                              style={{ fill: "#232326" }}
+                            />
+                          </g>
+                        </svg>
                       </Box>
                     </FlexMotion>
                   )}
@@ -325,7 +313,7 @@ const Home: NextPage = () => {
                 m="auto"
                 borderRadius={8}
               >
-                {array.map((elem) => (
+                {/* {array.map((elem) => (
                   <React.Fragment key={elem}>
                     <BoxMotion
                       marginX={1}
@@ -343,6 +331,90 @@ const Home: NextPage = () => {
                         ease: elem === section && "easeInOut",
                       }}
                     />
+                  </React.Fragment>
+                ))} */}
+                {array.map((elem) => (
+                  <React.Fragment key={elem}>
+                    <AnimatePresence mode="wait">
+                      {elem === section - 1 && (
+                        <BoxMotion
+                          key={elem}
+                          initial={{
+                            opacity: 0,
+                            x: -50,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            x: -40,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            x: 50,
+                          }}
+                          w="100px"
+                          h="100px"
+                          mt="-100px"
+                          position="absolute"
+                          boxShadow="2xl"
+                          borderRadius="md"
+                          bg={`blue.${Math.abs(elem * 2)}00`}
+                          zIndex={1}
+                        />
+                      )}
+                      {elem === section && (
+                        <BoxMotion
+                          key={elem}
+                          initial={{
+                            opacity: 0,
+                            x: -10,
+                            scale: 1,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                            scale: 1.2,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            x: 10,
+                            scale: 1,
+                          }}
+                          w="100px"
+                          h="100px"
+                          mt="-100px"
+                          position="absolute"
+                          boxShadow="dark-lg"
+                          borderRadius="md"
+                          bg={`blue.${Math.abs(elem * 2)}00`}
+                          zIndex={2}
+                        />
+                      )}
+                      {elem === section + 1 && (
+                        <BoxMotion
+                          key={elem}
+                          initial={{
+                            opacity: 0,
+                            x: 50,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            x: 40,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            x: -50,
+                          }}
+                          w="100px"
+                          h="100px"
+                          mt="-100px"
+                          position="absolute"
+                          boxShadow="2xl"
+                          borderRadius="md"
+                          bg={`blue.${Math.abs(elem * 2)}00`}
+                          zIndex={1}
+                        />
+                      )}
+                    </AnimatePresence>
                   </React.Fragment>
                 ))}
               </Flex>
